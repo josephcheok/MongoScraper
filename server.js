@@ -74,26 +74,22 @@ app.get("/scrape", function(req, res) {
             .children("a")
             .attr("href");
 
-        // Create a new Article using the `result` object built from scraping
-        db.Article.updateOne(
-          { title: result.title },
-          {
-            $set: {
-              title: result.title,
-              link: result.link,
-              saved: checkSaved(result.saved)
-            }
-          },
-          { upsert: true }
-        )
-          .then(function(dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
-          })
-          .catch(function(err) {
-            // If an error occurred, log it
-            console.log(err);
-          });
+        //Create new record outside of the exists function (db.Article.create(result) duplicates exsiting record)
+        let article = new db.Article(result);
+        // Check if record already exists based on title, if not, create new record
+        db.Article.exists({ title: result.title }).then(function(exists) {
+          if (!exists) {
+            db.Article.create(article)
+              .then(function(dbArticle) {
+                // View the added result in the console
+                console.log(dbArticle);
+              })
+              .catch(function(err) {
+                // If an error occurred, log it
+                console.log(err);
+              });
+          }
+        });
       });
 
       // Now, we grab every div with the following class name, and do the following:
@@ -109,26 +105,21 @@ app.get("/scrape", function(req, res) {
             .children("a")
             .attr("href");
 
-        // Create a new Article using the `result` object built from scraping
-        db.Article.updateOne(
-          { title: result.title },
-          {
-            $set: {
-              title: result.title,
-              link: result.link,
-              saved: checkSaved()
-            }
-          },
-          { upsert: true }
-        )
-          .then(function(dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
-          })
-          .catch(function(err) {
-            // If an error occurred, log it
-            console.log(err);
-          });
+        let article = new db.Article(result);
+        // Check if record already exists based on title, if not, create new record
+        db.Article.exists({ title: result.title }).then(function(exists) {
+          if (!exists) {
+            db.Article.create(article)
+              .then(function(dbArticle) {
+                // View the added result in the console
+                console.log(dbArticle);
+              })
+              .catch(function(err) {
+                // If an error occurred, log it
+                console.log(err);
+              });
+          }
+        });
       });
       // Send a message to the client
       res.send("Scrape Complete");
@@ -158,26 +149,21 @@ app.get("/scrape", function(req, res) {
           .children("a")
           .attr("href");
 
-        // Create a new Article using the `result` object built from scraping
-        db.Article.updateOne(
-          { title: result.title },
-          {
-            $set: {
-              title: result.title,
-              link: result.link,
-              saved: checkSaved()
-            }
-          },
-          { upsert: true }
-        )
-          .then(function(dbArticle) {
-            // View the added result in the console
-            console.log(dbArticle);
-          })
-          .catch(function(err) {
-            // If an error occurred, log it
-            console.log(err);
-          });
+        let article = new db.Article(result);
+        // Check if record already exists based on title, if not, create new record
+        db.Article.exists({ title: result.title }).then(function(exists) {
+          if (!exists) {
+            db.Article.create(article)
+              .then(function(dbArticle) {
+                // View the added result in the console
+                console.log(dbArticle);
+              })
+              .catch(function(err) {
+                // If an error occurred, log it
+                console.log(err);
+              });
+          }
+        });
       });
 
       // Send a message to the client
