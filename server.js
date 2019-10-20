@@ -27,45 +27,162 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/unit18Populater", { useNewUrlParser: true });
+var MONGODB_URI =
+  process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
 
 // Routes
 
-// A GET route for scraping the echoJS website
+// A GET route for scraping the cNet website
 app.get("/scrape", function(req, res) {
-  // First, we grab the body of the html with axios
-  axios.get("http://www.echojs.com/").then(function(response) {
-    // Then, we load that into cheerio and save it to $ for a shorthand selector
-    var $ = cheerio.load(response.data);
+  //this is to ensure that saved Articles do not get updated with a default value of false
+  //placed before axios to ensure that all axios have access to this function
 
-    // Now, we grab every h2 within an article tag, and do the following:
-    $("article h2").each(function(i, element) {
+  function checkSaved(savedState) {
+    if (savedState === true) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // First, we grab the body of the html with axios
+  axios
+    .get("https://www.cnet.com/facial-recognition/")
+    .then(function(response) {
+      // Then, we load that into cheerio and save it to $ for a shorthand selector
+      var $ = cheerio.load(response.data);
       // Save an empty result object
       var result = {};
 
-      // Add the text and href of every link, and save them as properties of the result object
-      result.title = $(this)
-        .children("a")
-        .text();
-      result.link = $(this)
-        .children("a")
-        .attr("href");
+      // Now, we grab every div with the following class name, and do the following:
+      $('div[class="col-8 item "]').each(function(i, element) {
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(this)
+          .children("span")
+          .children("a")
+          .children("div")
+          .children("h3")
+          .text();
+        result.link =
+          "https://cnet.com" +
+          $(this)
+            .children("span")
+            .children("a")
+            .attr("href");
 
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
+        // Create a new Article using the `result` object built from scraping
+        db.Article.updateOne(
+          { title: result.title },
+          {
+            $set: {
+              title: result.title,
+              link: result.link,
+              saved: checkSaved(result.saved)
+            }
+          },
+          { upsert: true }
+        )
+          .then(function(dbArticle) {
+            // View the added result in the console
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
+      });
+
+      // Now, we grab every div with the following class name, and do the following:
+      $('div[class="col-8 item large"]').each(function(i, element) {
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(this)
+          .children("div")
+          .children("h3")
+          .text();
+        result.link =
+          "https://cnet.com" +
+          $(this)
+            .children("a")
+            .attr("href");
+
+        // Create a new Article using the `result` object built from scraping
+        db.Article.updateOne(
+          { title: result.title },
+          {
+            $set: {
+              title: result.title,
+              link: result.link,
+              saved: checkSaved()
+            }
+          },
+          { upsert: true }
+        )
+          .then(function(dbArticle) {
+            // View the added result in the console
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
+      });
+      // Send a message to the client
+      res.send("Scrape Complete");
     });
 
-    // Send a message to the client
-    res.send("Scrape Complete");
-  });
+  axios
+    .get("https://www.theguardian.com/technology/facial-recognition")
+    .then(function(response) {
+      // Then, we load that into cheerio and save it to $ for a shorthand selector
+      var $ = cheerio.load(response.data);
+      // Save an empty result object
+      var result = {};
+
+      // Now, we grab every div with the following class name, and do the following:
+      $('div[class="fc-item__content "]').each(function(i, element) {
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(this)
+          .children("div")
+          .children("h3")
+          .children("a")
+          .children("span")
+          .children("span")
+          .text();
+        result.link = $(this)
+          .children("div")
+          .children("h3")
+          .children("a")
+          .attr("href");
+
+        // Create a new Article using the `result` object built from scraping
+        db.Article.updateOne(
+          { title: result.title },
+          {
+            $set: {
+              title: result.title,
+              link: result.link,
+              saved: checkSaved()
+            }
+          },
+          { upsert: true }
+        )
+          .then(function(dbArticle) {
+            // View the added result in the console
+            console.log(dbArticle);
+          })
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
+      });
+
+      // Send a message to the client
+      res.send("Scrape 2 Complete");
+    });
 });
 
 // Route for getting all Articles from the db
@@ -106,7 +223,11 @@ app.post("/articles/:id", function(req, res) {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
+      return db.Article.findOneAndUpdate(
+        { _id: req.params.id },
+        { note: dbNote._id },
+        { new: true }
+      );
     })
     .then(function(dbArticle) {
       // If we were able to successfully update an Article, send it back to the client
