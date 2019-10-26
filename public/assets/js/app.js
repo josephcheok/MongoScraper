@@ -9,14 +9,28 @@ $(document).on("click", ".scrape-new", function(event) {
   });
 });
 
+//On click of Save button of article, post status change to server.
 $(document).on("click", ".save", function(event) {
   var id = $(this).data("id");
   // Send the PUT request.
-  $.ajax("/saved", {
+  $.ajax("/save", {
     method: "POST",
     data: { id: id }
   }).then(function() {
-    console.log("Articles Scraped!");
+    console.log("Article Saved!");
+    // Reload the page to get the updated list
+    location.reload();
+  });
+});
+
+//On click of Delete button, delete Article from server
+$(document).on("click", ".delete", function(event) {
+  var id = $(this).data("id");
+  // Send the PUT request.
+  $.ajax("/" + id, {
+    method: "DELETE"
+  }).then(function() {
+    console.log("Article " + id + "Deleted!");
     // Reload the page to get the updated list
     location.reload();
   });

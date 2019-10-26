@@ -168,12 +168,26 @@ router.get("/scrape", function(req, res) {
 // Route for getting all Articles from the db
 router.get("/", function(req, res) {
   // Grab every document in the Articles collection
-  db.Article.find({})
+  db.Article.find({ saved: false })
     .then(function(dbArticle) {
       var hbsObject = { article: dbArticle };
       // If we were able to successfully find Articles, send them back to the client
       res.render("index", hbsObject);
-      console.log(hbsObject);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
+// Route for getting all Articles from the db
+router.get("/saved", function(req, res) {
+  // Grab every document in the Articles collection
+  db.Article.find({ saved: true })
+    .then(function(dbArticle) {
+      var hbsObject = { article: dbArticle };
+      // If we were able to successfully find Articles, send them back to the client
+      res.render("index", hbsObject);
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
@@ -198,9 +212,9 @@ router.get("/:id", function(req, res) {
 });
 
 // Route for saving/updating an Article's associated Note
-router.post("/saved", function(req, res) {
+router.post("/save", function(req, res) {
   // Create a new note and pass the req.body to the entry
-  db.Article.findOne({ _id: req.id })
+  db.Article.findOne({ _id: req.body.id })
     .then(function(dbArticle) {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
@@ -234,6 +248,18 @@ router.post("/:id", function(req, res) {
         { new: true }
       );
     })
+    .then(function(dbArticle) {
+      // If we were able to successfully update an Article, send it back to the client
+      res.json(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
+router.delete("/:id", function(req, res) {
+  db.Article.remove({ _id: req.params.id })
     .then(function(dbArticle) {
       // If we were able to successfully update an Article, send it back to the client
       res.json(dbArticle);

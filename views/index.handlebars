@@ -36,11 +36,7 @@
 <div class="container-fluid article-container unsaved">
 
   {{#each article}}
-  <!--this picks up unsaved articles -->
-  {{#unless saved}}
-  <!--render all unsaved articles with this partial-->
   {{> article/article-block}}
-  {{/unless}}
   {{/each}}
 
 </div>

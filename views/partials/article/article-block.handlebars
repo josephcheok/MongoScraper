@@ -2,7 +2,10 @@
 	<div class="card-header">
 		<h3>
 			<a class="article-link" target="_blank" rel="noopener noreferrer" href={{link}}>{{title}}
-			</a><a class="btn btn-success save">Save Article</a>
+			</a>{{#if saved}} <a class="btn btn-danger delete" data-id={{id}}>Delete From Saved</a>
+			<a class="btn btn-info notes" data-id={{id}}>Article Notes</a> {{else}} <a class="btn btn-success save"
+				data-id={{id}}>Save Article</a>
+			{{/if}}
 		</h3>
 	</div>
 	<div class="card-body">
