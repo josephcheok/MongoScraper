@@ -48,7 +48,14 @@ $(document).on("click", ".notes", function() {
   })
     // With that done, add the note information to the page
     .then(function(data) {
+      console.log(data);
       $('div[class="bootbox modal"]').show();
+      $('button[class="btn btn-success savenote"]').attr("data-id", data._id);
+      $("h4").text(`Notes for Article : ${data.title}`);
+      $('ul[class="list-group note-container"]').append(
+        `<li class="note-list">${data.note.body}<button class="btn btn-danger note-delete">&times</button></li>`
+      );
+      $(".list-group-item").hide();
     });
 });
 

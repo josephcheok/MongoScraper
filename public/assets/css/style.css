@@ -183,3 +183,12 @@ textarea {
 .close:not(:disabled):not(.disabled) {
   cursor: pointer;
 }
+
+.note-list {
+  list-style: none;
+  text-align: left;
+}
+
+.note-delete {
+  padding: 0 5px;
+}
