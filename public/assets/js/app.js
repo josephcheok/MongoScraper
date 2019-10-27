@@ -55,7 +55,9 @@ $(document).on("click", ".notes", function() {
       $('ul[class="list-group note-container"]').append(
         `<li class="note-list">${data.note.body}<button class="btn btn-danger note-delete">&times</button></li>`
       );
-      $(".list-group-item").hide();
+      if (data.note.body) {
+        $(".list-group-item").hide();
+      }
     });
 });
 
@@ -76,6 +78,8 @@ $(document).on("click", ".savenote", function() {
     // With that done
     .then(function(data) {
       // Log the response
+      $(".note-list").remove();
+      $(".list-group-item").show();
       console.log(data);
     });
 
@@ -86,4 +90,6 @@ $(document).on("click", ".savenote", function() {
 
 $(document).on("click", ".close", function(event) {
   $('div[class="bootbox modal"]').hide();
+  $(".note-list").remove();
+  $(".list-group-item").show();
 });
