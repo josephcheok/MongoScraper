@@ -37,7 +37,7 @@ $(document).on("click", ".delete", function(event) {
 });
 
 // Whenever someone clicks a p tag
-$(document).on("click", "p", function() {
+$(document).on("click", "notes", function() {
   // Empty the notes from the note section
   $("#notes").empty();
   // Save the id from the p tag
@@ -46,7 +46,7 @@ $(document).on("click", "p", function() {
   // Now make an ajax call for the Article
   $.ajax({
     method: "GET",
-    url: "/" + thisId
+    url: "/articles/" + thisId
   })
     // With that done, add the note information to the page
     .then(function(data) {
@@ -99,4 +99,8 @@ $(document).on("click", "#savenote", function() {
   // Also, remove the values entered in the input and textarea for note entry
   $("#titleinput").val("");
   $("#bodyinput").val("");
+});
+
+$(body).on("click", ".close", function(event) {
+  $(".modal").hideAll();
 });

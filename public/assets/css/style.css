@@ -171,3 +171,8 @@ textarea {
 .saved {
   display: none;
 }
+
+.close::hover {
+  cursor: pointer;
+  color: red;
+}
