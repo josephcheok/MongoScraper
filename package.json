@@ -1,7 +1,7 @@
 {
   "name": "mongoscraper",
   "version": "1.0.0",
-  "description": "Web scraper with MongoDB",
+  "description": "Web scraper with MongoDB :)",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
