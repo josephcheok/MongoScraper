@@ -36,6 +36,19 @@ $(document).on("click", ".delete", function(event) {
   });
 });
 
+//On click of Delete button, delete Note from server
+$(document).on("click", ".note-delete", function(event) {
+  var id = $(this).data("id");
+  // Send the PUT request.
+  $.ajax("/note/" + id, {
+    method: "DELETE"
+  }).then(function() {
+    console.log("Article " + id + "Deleted!");
+    // Reload the page to get the updated list
+    location.reload();
+  });
+});
+
 // Whenever someone clicks a p tag
 $(document).on("click", ".notes", function() {
   // Save the id from the p tag
@@ -48,7 +61,6 @@ $(document).on("click", ".notes", function() {
   })
     // With that done, add the note information to the page
     .then(function(data) {
-      console.log(data);
       $('div[class="bootbox modal"]').show();
       $('button[class="btn btn-success savenote"]').attr("data-id", data._id);
       $("h4").text(`Notes for Article : ${data.title}`);
@@ -82,7 +94,6 @@ $(document).on("click", ".savenote", function() {
       // Log the response
       $(".note-list").remove();
       $(".list-group-item").show();
-      console.log(data);
     });
 
   // Also, remove the values entered in the input and textarea for note entry
@@ -94,4 +105,14 @@ $(document).on("click", ".close", function(event) {
   $('div[class="bootbox modal"]').hide();
   $(".note-list").remove();
   $(".list-group-item").show();
+});
+
+$(document).on("click", ".clear", function(event) {
+  $.ajax("/clear", {
+    method: "POST"
+  }).then(function() {
+    console.log("Unsaved Articles Deleted!");
+    // Reload the page to get the updated list
+    location.reload();
+  });
 });

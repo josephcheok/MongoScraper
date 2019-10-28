@@ -173,7 +173,6 @@ router.get("/", function(req, res) {
       var hbsObject = { article: dbArticle };
       // If we were able to successfully find Articles, send them back to the client
       res.render("index", hbsObject);
-      console.log("Unsaved Articles: " + JSON.stringify(hbsObject));
     })
     .catch(function(err) {
       // If an error occurred, send it to the client
@@ -271,5 +270,29 @@ router.delete("/:id", function(req, res) {
     });
 });
 
+router.delete("/note/:id", function(req, res) {
+  db.Note.remove({ _id: req.params.id })
+    .then(function(dbNote) {
+      // If we were able to successfully update an Article, send it back to the client
+      res.json(dbNote);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+
+router.post("/clear", function(req, res) {
+  db.Article.remove({ saved: false })
+    .then(function(dbArticle) {
+      // If we were able to successfully update an Article, send it back to the client
+      res.json(dbArticle);
+      console.log(dbArticle);
+    })
+    .catch(function(err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
 // Export routes for server.js to use.
 module.exports = router;
