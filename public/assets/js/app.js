@@ -52,12 +52,14 @@ $(document).on("click", ".notes", function() {
       $('div[class="bootbox modal"]').show();
       $('button[class="btn btn-success savenote"]').attr("data-id", data._id);
       $("h4").text(`Notes for Article : ${data.title}`);
-      $('ul[class="list-group note-container"]').append(
-        `<li class="note-list">${data.note.body}<button class="btn btn-danger note-delete">&times</button></li>`
-      );
-      if (data.note.body) {
+      if (data.note.length) {
         $(".list-group-item").hide();
       }
+      data.note.forEach(item => {
+        $('ul[class="list-group note-container"]').append(
+          `<li class="note-list">${item.body}<button class="btn btn-danger note-delete" data-id=${item._id}>&times</button></li>`
+        );
+      });
     });
 });
 
