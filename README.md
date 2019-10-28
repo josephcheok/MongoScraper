@@ -1,6 +1,6 @@
 # MongoScraper
 
-### To view the deployed version, _**[click here!](https://mongo-scraper-principio.herokuapp.com/)**_
+### To view the deployed version, _**[click here!](https://mongoscraperfun.herokuapp.com/)**_
 
 ## Overview
 
